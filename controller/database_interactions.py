@@ -2,7 +2,7 @@
 
 from sqlalchemy.exc import IntegrityError
 
-from oc_p5.database.create_tables import *
+from database.create_tables import *
 
 
 def is_user_in_db(session, username):
@@ -167,23 +167,23 @@ def get_healthier_products(session, product_to_replace):
 
 def save_replaced_product(session, replacement):
     """
-        This function save a specified Saved_Product object to the database
+        This function save a specified SavedProduct object to the database
             session : sqlalchemy.orm.session.Session
-            replacement : Saved_Product
+            replacement : SavedProduct
     """
     session.add(replacement)
     session.commit()
 
 
-def get_saved_products_from_bdd(session, user):
+def get_SavedProducts_from_bdd(session, user):
     """
         This function gets a all the saved products for a specified user
             session : sqlalchemy.orm.session.Session
             user : User
     """
     return [{
-                "saved_product": product.__dict__,
+                "SavedProduct": product.__dict__,
                 "original_product": get_product_by_id(session, product.original_product_id).__dict__,
                 "substitute_product": get_product_by_id(session, product.substitute_product_id).__dict__
-        } for product in session.query(Saved_Product).filter(Saved_Product.user == user)
+        } for product in session.query(SavedProduct).filter(SavedProduct.user == user)
     ]

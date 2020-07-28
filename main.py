@@ -3,8 +3,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from oc_p5.controller.database_interactions import *
-from oc_p5.database.generate_objects import *
+from controller.database_interactions import *
+from database.generate_objects import *
 
 database_name = "oc_p5"
 engine = create_engine("mysql+pymysql://root:admin@localhost:3306/"+database_name)
@@ -12,16 +12,16 @@ session = Session(engine)
 
 
 class TextColor:
-    PURPLE = '\033[95m'
-    CYAN = '\033[96m'
-    DARKCYAN = '\033[36m'
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    END = '\033[0m'
+    PURPLE = "\033[95m"
+    CYAN = "\033[96m"
+    DARKCYAN = "\033[36m"
+    BLUE = "\033[94m"
+    GREEN = "\033[92m"
+    YELLOW = "\033[93m"
+    RED = "\033[91m"
+    BOLD = "\033[1m"
+    UNDERLINE = "\033[4m"
+    END = "\033[0m"
 
 
 def login_screen():
@@ -201,7 +201,7 @@ def replace_product_screen(user, category):
                   "home page")
     if choice == "1":
 
-        save_replaced_product(session, generate_saved_product(user, product_to_replace, healthier_selected_product))
+        save_replaced_product(session, generate_SavedProduct(user, product_to_replace, healthier_selected_product))
     else:
         logged_out_screen()
 
@@ -211,22 +211,23 @@ def display_products(products):
         This function displays a specified list of products as a table
             products : list
     """
-    print("{:<8} | {:<80} | {:<50} | {:<10} | {:<30}".format("Id", "Name", "Brand", "Nutriscore", "Url"))
+    print("{:<8} | {:<80} | {:<50} | {:<50} | {:<10} | {:<30}".format("Id", "Name", "Brand", "Retailers", "Nutriscore", "Url"))
     print("------------------------------------------------------------------"
           "--------------------------------------------------------------------"
           "----------------------------------------------------------------------"
           "-----------------------------------------------------------------------"
           "-------------------------------------------------------------------------------------------------")
     for product in products:
-        print("{:<8} | {:<80} | {:<50} | {:<10} | {:<30}".format(product["id"], product["name"], product["brand"],
-                                                                 int(product["nutriscore"]), product["url"], ))
+        print("{:<8} | {:<80} | {:<50} | {:<50} | {:<10} | {:<30}".format(product["id"], product["name"], product["brand"],
+                                                                          product["retailer"],
+                                                                 int(product["nutriscore"]), product["url"] ))
 
-def saved_products_screen(user):
+def SavedProducts_screen(user):
     """
         This function displays the list of all the saved products for a specified user
             user : User
     """
-    saved_products = get_saved_products_from_bdd(session, user)
+    SavedProducts = get_SavedProducts_from_bdd(session, user)
     print("---------------------------------------------------------------")
     print(TextColor.GREEN + "MY SAVED PRODUCTS" + TextColor.END)
     print("---------------------------------------------------------------\n")
@@ -249,7 +250,7 @@ def saved_products_screen(user):
           "----------------------------------------------------------------------"
           "-----------------------------------------------------------------------"
           "-------------------------------------------------------------------------------------------------")
-    for product in saved_products:
+    for product in SavedProducts:
 
         print("\033[93m {:<20} | {:<50} | {:<50} | {:<25} \033[94m| {:<50} | {:<50} | {:<50} | {:<50}\033[0m".format(
 
@@ -323,7 +324,7 @@ def logged_in_screen(user):
     if choice == "1":
         replace_product_screen(user, choose_category_screen())
     elif choice == "2":
-        saved_products_screen(user)
+        SavedProducts_screen(user)
     elif choice == "3":
         categories_screen(user)
     elif choice == "4":

@@ -14,15 +14,15 @@ def create_search_url(page, category):
     """
 
     parameters = {
-        'action': 'process',
-        'tagtype_0': 'categories',
-        'tag_contains_0': 'contains',
-        'tag_0': category,
-        'page_size': 100,
-        'page': page,
-        'json': '1'
+        "action": "process",
+        "tagtype_0": "categories",
+        "tag_contains_0": "contains",
+        "tag_0": category,
+        "page_size": 100,
+        "page": page,
+        "json": "1"
     }
-    url = 'https://fr.openfoodfacts.org/cgi/search.pl?' + urllib.parse.urlencode(parameters)
+    url = "https://fr.openfoodfacts.org/cgi/search.pl?" + urllib.parse.urlencode(parameters)
 
     return url
 
@@ -34,11 +34,11 @@ def get_pages_count(category):
             page_amount : int
     """
 
-    url = create_search_url('1', category)
+    url = create_search_url("1", category)
 
     request = requests.get(url)
     data = request.json()
-    page_amount = ceil(int(data['count']) / 100)
+    page_amount = ceil(int(data["count"]) / 100)
 
     return page_amount
 
@@ -50,4 +50,4 @@ def get_products(page, category):
             category : str
             return : list
     """
-    return requests.get(create_search_url(page, category)).json()['products']
+    return requests.get(create_search_url(page, category)).json()["products"]

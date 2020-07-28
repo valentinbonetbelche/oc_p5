@@ -7,12 +7,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 Base = declarative_base()
 
-# engine, suppose it has two tables 'user' and 'address' set up
 engine = create_engine("mysql+pymysql://root:admin@localhost:3306/oc_p5")
 
 
 class User(Base):
-    __tablename__ = 'user'
+    __tablename__ = "user"
 
     id = Column(Integer, primary_key=True)
     username = Column(String(150), unique=True)
@@ -26,7 +25,7 @@ class User(Base):
 
 
 class Category(Base):
-    __tablename__ = 'category'
+    __tablename__ = "category"
 
     id = Column(Integer, primary_key=True)
     name = Column(String(150), unique=True)
@@ -36,14 +35,13 @@ class Category(Base):
 
 
 class Product(Base):
-    __tablename__ = 'product'
+    __tablename__ = "product"
 
     id = Column(BigInteger, primary_key=True)
     ref_id = Column(BigInteger, unique=True)
     name = Column(String(150))
     brand = Column(String(150))
     category_id = Column(Integer, ForeignKey("category.id"))
-    description = Column(String(300))
     nutriscore = Column(Float)
     retailer = Column(String(150))
     url = Column(String(500))
@@ -51,17 +49,17 @@ class Product(Base):
     category = relationship("Category", foreign_keys="Product.category_id")
 
 
-class Saved_Product(Base):
-    __tablename__ = 'saved_product'
+class SavedProduct(Base):
+    __tablename__ = "SavedProduct"
 
     id = Column(Integer, primary_key=True)
     original_product_id = Column(BigInteger, ForeignKey("product.id"))
     substitute_product_id = Column(BigInteger, ForeignKey("product.id"))
     user_id = Column(Integer, ForeignKey("user.id"))
 
-    user = relationship("User", foreign_keys="Saved_Product.user_id")
-    original_product = relationship("Product", foreign_keys="Saved_Product.original_product_id")
-    substitute_product = relationship("Product", foreign_keys="Saved_Product.substitute_product_id")
+    user = relationship("User", foreign_keys="SavedProduct.user_id")
+    original_product = relationship("Product", foreign_keys="SavedProduct.original_product_id")
+    substitute_product = relationship("Product", foreign_keys="SavedProduct.substitute_product_id")
 
 
 Base.metadata.create_all(engine)
