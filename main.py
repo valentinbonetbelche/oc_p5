@@ -2,8 +2,9 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-from controller.database_interactions import *
-from database.generate_objects import *
+
+from oc_p5.controller.database_interactions import *
+from oc_p5.database.generate_objects import *
 
 database_name = "oc_p5"
 engine = create_engine("mysql+pymysql://root:admin@localhost:3306/"+database_name)

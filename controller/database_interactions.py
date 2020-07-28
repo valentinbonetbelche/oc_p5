@@ -1,7 +1,8 @@
 # THIS FILE HOLDS THE FUNCTIONS THAT INTERACT WITH THE DATABASE
 
 from sqlalchemy.exc import IntegrityError
-from database.create_tables import User, Category, Product, Saved_Product
+
+from oc_p5.database.create_tables import *
 
 
 def is_user_in_db(session, username):

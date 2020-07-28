@@ -50,5 +50,4 @@ def get_products(page, category):
             category : str
             return : list
     """
-    print(type(requests.get(create_search_url(page, category)).json()['products']))
     return requests.get(create_search_url(page, category)).json()['products']
