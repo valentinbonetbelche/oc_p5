@@ -54,6 +54,7 @@ class SavedProduct(Base):
     user_id = Column(Integer, ForeignKey("user.id"))
 
     user = relationship("User", foreign_keys="SavedProduct.user_id")
-    original_product = relationship("Product", foreign_keys="SavedProduct.original_product_id")
-    substitute_product = relationship("Product", foreign_keys="SavedProduct.substitute_product_id")
-
+    original_product = relationship(
+        "Product", foreign_keys="SavedProduct.original_product_id")
+    substitute_product = relationship(
+        "Product", foreign_keys="SavedProduct.substitute_product_id")

@@ -9,13 +9,12 @@ from models import User, Category, Product, SavedProduct
 
 
 class Controller:
-
     def __init__(self, session):
         self.session = session
 
     def is_user_in_db(self, username):
         """
-            This function checks if the user exists in the database by his username
+            This method checks if the user exists in the database by his username
                 username : str
                 return : bool
         """
@@ -26,7 +25,7 @@ class Controller:
 
     def add_user(self, user):
         """
-            This function adds a specified User object to the database
+            This method adds a specified User object to the database
                 user : User
         """
         self.session.add(user)
@@ -34,18 +33,19 @@ class Controller:
 
     def get_user(self, username):
         """
-            This function gets the User object associated with a specified username from the database
+            This method gets the User object associated with a specified username from the database
                 username : str
                 return : User or None if user is not in database
         """
         if self.is_user_in_db(username):
-            return self.session.query(User).filter_by(username=username).first()
+            return self.session.query(User).filter_by(
+                username=username).first()
         else:
             return None
 
     def authenticate_user(self, username, password):
         """
-            This function checks the specified password for a specified username and returns a dict containing
+            This method checks the specified password for a specified username and returns a dict containing
             the user if so
                 username : str
                 password : str
@@ -58,24 +58,27 @@ class Controller:
         user = self.get_user(username)
         if user:
             if user.check_password(password):
-                return {"user_exists": True,
-                        "is_authenticated": True,
-                        "user": user
-                        }
+                return {
+                    "user_exists": True,
+                    "is_authenticated": True,
+                    "user": user
+                }
             else:
-                return {"user_exists": True,
-                        "is_authenticated": False,
-                        "user": user
-                        }
-        else:
-            return {"user_exists": False,
+                return {
+                    "user_exists": True,
                     "is_authenticated": False,
-                    "user": None
-                    }
+                    "user": user
+                }
+        else:
+            return {
+                "user_exists": False,
+                "is_authenticated": False,
+                "user": None
+            }
 
     def add_categories_to_bdd(self, categories):
         """
-            This function adds a specified list of Category objects to the database
+            This method adds a specified list of Category objects to the database
                 categories : list
         """
         print("Initializing categories...")
@@ -88,22 +91,26 @@ class Controller:
 
     def get_categories(self):
         """
-            This function gets all categories' names from the database
+            This method gets all categories' names from the database
                 return : list
         """
-        return [category[0] for category in self.session.query(Category.name).all()]
+        return [
+            category[0]
+            for category in self.session.query(Category.name).all()
+        ]
 
     def get_category_id(self, category):
         """
-            This function gets the id of a category for a specified category name
+            This method gets the id of a category for a specified category name
                 category : str
                 return : int
         """
-        return self.session.query(Category.id).filter(Category.name == category)
+        return self.session.query(
+            Category.id).filter(Category.name == category)
 
     def add_products_to_bdd(self, products):
         """
-            This function adds products to the database
+            This method adds products to the database
                 products : list
         """
         imported_count = 0
@@ -117,23 +124,25 @@ class Controller:
                 already_in_bdd_count += 1
                 self.session.rollback()
 
-        print(imported_count, "out of", len(products), "products were imported.", already_in_bdd_count,
+        print(imported_count, "out of", len(products),
+              "products were imported.", already_in_bdd_count,
               "products were already in the database.")
 
     def get_products_from_bdd(self, categories):
         """
-            This function gets all the products for a specified list of categories from the database
+            This method gets all the products for a specified list of categories from the database
                 categories : list
                 return : list
         """
         products = []
         for category in categories:
-            products += self.session.query(Product).filter(Product.category_id == self.get_category_id(category))
+            products += self.session.query(Product).filter(
+                Product.category_id == self.get_category_id(category))
         return [product.__dict__ for product in products]
 
     def get_product_by_id(self, id):
         """
-            This function gets the product associated by a specified id from the database
+            This method gets the product associated by a specified id from the database
                 id : int
                 return : Product
         """
@@ -141,17 +150,20 @@ class Controller:
 
     def get_healthier_products(self, product_to_replace):
         """
-            This function gets a list of all the Product objects with a better nutriscore from the database
+            This method gets a list of all the Product objects with a better nutriscore from the database
                 product_to_replace : Product
                 return : list
         """
-        return [product.__dict__ for product in self.session.query(Product)
+        return [
+            product.__dict__
+            for product in self.session.query(Product)
             .filter(Product.category_id == product_to_replace.category_id)
-            .filter(Product.nutriscore > product_to_replace.nutriscore)]
+            .filter(Product.nutriscore > product_to_replace.nutriscore)
+        ]
 
     def save_replaced_product(self, replacement):
         """
-            This function save a specified SavedProduct object to the database
+            This method save a specified SavedProduct object to the database
                 replacement : SavedProduct
         """
         self.session.add(replacement)
@@ -159,19 +171,23 @@ class Controller:
 
     def get_saved_products_from_bdd(self, user):
         """
-            This function gets a all the saved products for a specified user
+            This method gets a all the saved products for a specified user
                 user : User
         """
         return [{
-            "SavedProduct": product.__dict__,
-            "original_product": self.get_product_by_id(product.original_product_id).__dict__,
-            "substitute_product": self.get_product_by_id(product.substitute_product_id).__dict__
-        } for product in self.session.query(SavedProduct).filter(SavedProduct.user == user)
-        ]
+            "SavedProduct":
+            product.__dict__,
+            "original_product":
+            self.get_product_by_id(product.original_product_id).__dict__,
+            "substitute_product":
+            self.get_product_by_id(product.substitute_product_id).__dict__
+        }
+                for product in self.session.query(SavedProduct).filter(
+                    SavedProduct.user == user)]
 
     def create_search_url(self, page, category):
         """
-            This function creates the search url for a specified category and page number
+            This method creates the search url for a specified category and page number
                 page : int
                 category : str
                 url : str
@@ -186,13 +202,14 @@ class Controller:
             "page": page,
             "json": "1"
         }
-        url = "https://fr.openfoodfacts.org/cgi/search.pl?" + urllib.parse.urlencode(parameters)
+        url = "https://fr.openfoodfacts.org/cgi/search.pl?" + urllib.parse.urlencode(
+            parameters)
 
         return url
 
     def get_pages_count(self, category):
         """
-            This function retrieves the amount of result pages for a specified category
+            This method retrieves the amount of result pages for a specified category
                 category : str
                 page_amount : int
         """
@@ -207,16 +224,17 @@ class Controller:
 
     def get_products(self, page, category):
         """
-            This function retrieves the final products of a specified page number and category by using the other functions
+            This method retrieves the final products of a specified page number and category by using the other methods
                 page : int
                 category : str
                 return : list
         """
-        return requests.get(self.create_search_url(page, category)).json()["products"]
+        return requests.get(self.create_search_url(
+            page, category)).json()["products"]
 
     def generate_products(self, categories):
         """
-            This function creates a list of Product Objects for a specified list of categories, to be inserted in the
+            This method creates a list of Product Objects for a specified list of categories, to be inserted in the
             database by the controller
                 categories : list or str
                 products : list
@@ -228,10 +246,7 @@ class Controller:
             category_id = self.get_category_id(category)
             for page in range(1, self.get_pages_count(category) + 1):
                 for i in self.get_products(page, category):
-                    if "nutrition-facts-completed" in i["states"] and "product-name-completed" \
-                            in i["states"] and "brands-completed" in i[
-                        "states"] and "nutriscore_score" in i and "id" in i \
-                            and "stores" in i:
+                    if "nutrition-facts-completed" in i["states"] and "product-name-completed" in i["states"] and "brands-completed" in i["states"] and "nutriscore_score" in i and "id" in i and "stores" in i:
                         try:
                             i["brands"].index(",")
                             multiple_brands = True
@@ -241,36 +256,31 @@ class Controller:
                             Product(
                                 ref_id=i["id"],
                                 name=i["product_name"].replace("\n", ""),
-                                brand=i["brands"][:i["brands"].index(",")] if multiple_brands else i["brands"],
+                                brand=i["brands"][:i["brands"].index(",")]
+                                if multiple_brands else i["brands"],
                                 nutriscore=i["nutriscore_score"],
                                 category_id=category_id,
                                 retailer=i["stores"],
-                                url=i["url"]
-                            )
-                        )
+                                url=i["url"]))
                 if len(products) > index * 400:
                     break
         return products
 
     def generate_categories(self, categories):
         """
-            This function creates a list of Category Objects for a specified list of categories, to be inserted in the
+            This method creates a list of Category Objects for a specified list of categories, to be inserted in the
             database by the controller
                 categories : list
                 products : list
         """
         categories_created = []
         for category in categories:
-            categories_created.append(
-                Category(
-                    name=category
-                )
-            )
+            categories_created.append(Category(name=category))
         return categories_created
 
     def generate_user(self, username, password):
         """
-            This function creates a User object with a specified username and password
+            This method creates a User object with a specified username and password
                 username : str
                 password : str
                 return : User
@@ -279,9 +289,10 @@ class Controller:
         user.set_password(password)
         return user
 
-    def generate_SavedProduct(self, user, product_to_replace, healthier_selected_product):
+    def generate_SavedProduct(self, user, product_to_replace,
+                              healthier_selected_product):
         """
-            This function creates a SavedProduct object with a specified product to replace and healthier product
+            This method creates a SavedProduct object with a specified product to replace and healthier product
                 product_to_replace : Product
                 healthier_selected_product : Product
                 return : SavedProduct
@@ -289,5 +300,4 @@ class Controller:
         return SavedProduct(
             original_product_id=product_to_replace.id,
             substitute_product_id=healthier_selected_product.id,
-            user_id=user.id
-        )
+            user_id=user.id)
