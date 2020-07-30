@@ -213,19 +213,20 @@ class View:
             if choice not in choices:
                 print(
                     self.text_color.red_text("\nThis choice does not exist!"))
-            if choice == "1" and not self.user:
+        if choice == "1":
+            if self.user:
+                self.controller.save_replaced_product(
+                    self.controller.generate_SavedProduct(
+                        self.user, product_to_replace, healthier_selected_product))
+                print(
+                    self.text_color.green_text(
+                        "\nYou successfully saved this product replacement!\n"))
+            else:
                 print(
                     self.text_color.red_text(
                         "\nYou have to be connected to save your product replacements!\n\nYou can create an account "
                         "from the "
-                        "home page"))
-        if choice == "1":
-            self.controller.save_replaced_product(
-                self.controller.generate_SavedProduct(
-                    self.user, product_to_replace, healthier_selected_product))
-            print(
-                self.text_color.green_text(
-                    "\nYou successfully saved this product replacement!\n"))
+                        "home page\n"))
         input(
             self.text_color.blue_text(
                 "\nPress ENTER to get back to the main menu\n"))
